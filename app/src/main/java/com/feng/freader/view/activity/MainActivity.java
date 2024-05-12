@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 
@@ -27,7 +26,6 @@ import com.feng.freader.entity.eventbus.MoreIntoEvent;
 import com.feng.freader.util.EventBusUtil;
 import com.feng.freader.util.StatusBarUtil;
 import com.feng.freader.view.fragment.main.BookshelfFragment;
-import com.feng.freader.view.fragment.main.DiscoveryFragment;
 import com.feng.freader.view.fragment.main.MoreFragment;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener{
@@ -46,13 +44,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     private static final String KEY_MORE_FG = "more_fg";
 
     private View mBookshelfBg;
-    private View mDiscoveryBg;
     private View mMoreBg;
     private ImageView mBookshelfBeforeIv;
-    private ImageView mDiscoveryBeforeIv;
     private ImageView mMoreBeforeIv;
     private ImageView mBookshelfAfterIv;
-    private ImageView mDiscoveryAfterIv;
     private ImageView mMoreAfterIv;
 
     private Animator mBookshelfAnim;
@@ -90,16 +85,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     protected void initView() {
         mBookshelfBg = findViewById(R.id.v_main_bottom_bar_bookshelf_bg);
         mBookshelfBg.setOnClickListener(this);
-        mDiscoveryBg = findViewById(R.id.v_main_bottom_bar_discovery_bg);
-        mDiscoveryBg.setOnClickListener(this);
         mMoreBg = findViewById(R.id.v_main_bottom_bar_more_bg);
         mMoreBg.setOnClickListener(this);
-
         mBookshelfBeforeIv = findViewById(R.id.iv_main_bottom_bar_bookshelf_before);
-        mDiscoveryBeforeIv = findViewById(R.id.iv_main_bottom_bar_discovery_before);
         mMoreBeforeIv = findViewById(R.id.iv_main_bottom_bar_more_before);
         mBookshelfAfterIv= findViewById(R.id.iv_main_bottom_bar_bookshelf_after);
-        mDiscoveryAfterIv = findViewById(R.id.iv_main_bottom_bar_discovery_after);
         mMoreAfterIv = findViewById(R.id.iv_main_bottom_bar_more_after);
     }
 
@@ -157,8 +147,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                     break;
                 }
                 // 在开启当前菜单项的动画前，先切换其他菜单项的 icon
-                mDiscoveryBeforeIv.setVisibility(View.VISIBLE);
-                mDiscoveryAfterIv.setVisibility(View.INVISIBLE);
                 mMoreBeforeIv.setVisibility(View.VISIBLE);
                 mMoreAfterIv.setVisibility(View.INVISIBLE);
                 // 开启当前菜单项的动画
@@ -170,25 +158,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 // 改变状态栏颜色
                 StatusBarUtil.setLightColorStatusBar(this);
                 break;
-            case R.id.v_main_bottom_bar_discovery_bg:
-                // 如果已经点击了该菜单项，无视该操作
-                if (mDiscoveryAfterIv.getVisibility() == View.VISIBLE) {
-                    break;
-                }
-                // 在开启当前菜单项的动画前，先切换其他菜单项的 icon
-                mBookshelfBeforeIv.setVisibility(View.VISIBLE);
-                mBookshelfAfterIv.setVisibility(View.INVISIBLE);
-                mMoreBeforeIv.setVisibility(View.VISIBLE);
-                mMoreAfterIv.setVisibility(View.INVISIBLE);
-                // 开启当前菜单项的动画
-                initDiscoveryShowAnim();
-                mDiscoveryAfterIv.setVisibility(View.VISIBLE);
-                mDiscoveryAnim.start();
-                // 切换 Fragment
-                changeFragment(FG_DISCOVERY);
-                // 改变状态栏颜色
-                StatusBarUtil.setLightColorStatusBar(this);
-                break;
             case R.id.v_main_bottom_bar_more_bg:
                 // 如果已经点击了该菜单项，无视该操作
                 if (mMoreAfterIv.getVisibility() == View.VISIBLE) {
@@ -197,8 +166,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 // 在开启当前菜单项的动画前，先切换其他菜单项的 icon
                 mBookshelfBeforeIv.setVisibility(View.VISIBLE);
                 mBookshelfAfterIv.setVisibility(View.INVISIBLE);
-                mDiscoveryBeforeIv.setVisibility(View.VISIBLE);
-                mDiscoveryAfterIv.setVisibility(View.INVISIBLE);
                 // 开启当前菜单项的动画
                 initMoreShowAnim();
                 mMoreAfterIv.setVisibility(View.VISIBLE);
@@ -232,30 +199,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 // 动画结束时，隐藏 before icon
                 if (mBookshelfAfterIv.getVisibility() == View.VISIBLE) {
                     mBookshelfBeforeIv.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
-    }
-
-    /**
-     * 初始化“发现”图标的显示动画
-     */
-    private void initDiscoveryShowAnim() {
-        int cx = mDiscoveryAfterIv.getMeasuredWidth() / 2;   // 揭露动画中心点的 x 坐标
-        int cy = mDiscoveryAfterIv.getMeasuredHeight() / 2;  // 揭露动画中心点的 y 坐标
-        float startRadius = 0f;     // 开始半径
-        float endRadius = (float) Math.max(mDiscoveryAfterIv.getWidth()
-                , mDiscoveryAfterIv.getHeight()) / 2;  // 结束半径
-        mDiscoveryAnim = ViewAnimationUtils
-                .createCircularReveal(mDiscoveryAfterIv, cx, cy, startRadius, endRadius); // 创建揭露动画
-        mDiscoveryAnim.setDuration(DUR_BOTTOM_BAR_ICON_ANIM);
-        mDiscoveryAnim.setInterpolator(mTimeInterpolator);
-        mDiscoveryAnim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                // 动画结束时，隐藏 before icon
-                if (mDiscoveryAfterIv.getVisibility() == View.VISIBLE) {
-                    mDiscoveryBeforeIv.setVisibility(View.INVISIBLE);
                 }
             }
         });
@@ -305,13 +248,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                     ft.add(R.id.fv_main_fragment_container, mBookshelfFragment);
                 }
                 showFragment = mBookshelfFragment;
-                break;
-            case FG_DISCOVERY:
-                if (mDiscoveryFragment == null) {
-                    mDiscoveryFragment = new DiscoveryFragment();
-                    ft.add(R.id.fv_main_fragment_container, mDiscoveryFragment);
-                }
-                showFragment = mDiscoveryFragment;
                 break;
             case FG_MORE:
                 if (mMoreFragment == null) {
