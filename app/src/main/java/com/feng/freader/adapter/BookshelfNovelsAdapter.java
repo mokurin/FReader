@@ -1,5 +1,6 @@
 package com.feng.freader.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
@@ -52,7 +53,7 @@ public class BookshelfNovelsAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, @SuppressLint("RecyclerView") final int i) {
         final ContentViewHolder contentViewHolder = (ContentViewHolder) viewHolder;
         // 多选删除时显示 CheckBox
         if (mIsMultiDelete) {

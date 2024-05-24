@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -18,7 +16,6 @@ import android.widget.TextView;
 import com.feng.freader.R;
 import com.feng.freader.adapter.BookshelfNovelsAdapter;
 import com.feng.freader.base.BaseFragment;
-import com.feng.freader.base.BasePresenter;
 import com.feng.freader.constant.EventBusCode;
 import com.feng.freader.constract.IBookshelfContract;
 import com.feng.freader.db.DatabaseManager;
@@ -27,15 +24,12 @@ import com.feng.freader.entity.epub.OpfData;
 import com.feng.freader.entity.eventbus.Event;
 import com.feng.freader.presenter.BookshelfPresenter;
 import com.feng.freader.util.FileUtil;
-import com.feng.freader.util.NetUtil;
-import com.feng.freader.util.RecyclerViewUtil;
 import com.feng.freader.util.StatusBarUtil;
 import com.feng.freader.view.activity.ReadActivity;
 import com.feng.freader.widget.TipDialog;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -302,10 +296,6 @@ public class BookshelfFragment extends BaseFragment<BookshelfPresenter>
                 new BookshelfNovelsAdapter.BookshelfNovelListener() {
                     @Override
                     public void clickItem(int position) {
-                        if (!NetUtil.hasInternet(getActivity())) {
-                            showShortToast("当前无网络，请检查网络后重试");
-                            return;
-                        }
                         if (mIsDeleting) {
                             return;
                         }

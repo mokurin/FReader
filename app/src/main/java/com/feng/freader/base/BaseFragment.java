@@ -8,9 +8,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.feng.freader.util.EventBusUtil;
-import com.feng.freader.util.ToastUtil;
 
 public abstract class BaseFragment<V extends BasePresenter> extends Fragment {
 
@@ -101,7 +101,7 @@ public abstract class BaseFragment<V extends BasePresenter> extends Fragment {
      * @param content
      */
     protected void showShortToast(String content) {
-        ToastUtil.showToast(getContext(), content);
+        Toast.makeText(getContext(), content, Toast.LENGTH_SHORT).show();
     }
 
     /**

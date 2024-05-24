@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.feng.freader.util.EventBusUtil;
-import com.feng.freader.util.ToastUtil;
 
 public abstract class BaseActivity<T extends BasePresenter> extends AppCompatActivity {
 
@@ -97,7 +97,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
      * @param content 弹出的内容
      */
     protected void showShortToast(String content) {
-        ToastUtil.showToast(this, content);
+        Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
     }
 
     /**

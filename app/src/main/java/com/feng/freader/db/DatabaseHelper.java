@@ -8,9 +8,6 @@ import android.util.Log;
 import com.feng.freader.constant.Constant;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-
-    private static final String TAG = "fzh";
-
     // 创建历史记录表
     private static final String CREATE_TABLE_HISTORY = "create table " + Constant.TABLE_HISTORY
             + " (" + Constant.TABLE_HISTORY_ID + " integer primary key autoincrement, "
