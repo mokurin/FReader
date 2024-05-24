@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Constant {
+
     /* 热门榜单相关 */
     // 男生热门榜单的榜单数
     public static final int MALE_HOT_RANK_NUM = 5;

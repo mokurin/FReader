@@ -1,11 +1,9 @@
 package com.feng.freader.view.activity;
 
-import android.content.Intent;
 import android.database.ContentObserver;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.constraint.ConstraintLayout;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -25,16 +23,15 @@ import com.feng.freader.db.DatabaseManager;
 import com.feng.freader.entity.data.BookshelfNovelDbData;
 import com.feng.freader.entity.data.DetailedChapterData;
 import com.feng.freader.entity.epub.EpubData;
-import com.feng.freader.entity.epub.OpfData;
 import com.feng.freader.entity.epub.EpubTocItem;
+import com.feng.freader.entity.epub.OpfData;
 import com.feng.freader.entity.eventbus.EpubCatalogInitEvent;
 import com.feng.freader.entity.eventbus.Event;
-import com.feng.freader.entity.eventbus.HoldReadActivityEvent;
 import com.feng.freader.http.UrlObtainer;
 import com.feng.freader.presenter.ReadPresenter;
 import com.feng.freader.util.EpubUtils;
-import com.feng.freader.util.ScreenUtil;
 import com.feng.freader.util.EventBusUtil;
+import com.feng.freader.util.ScreenUtil;
 import com.feng.freader.util.SpUtil;
 import com.feng.freader.util.StatusBarUtil;
 import com.feng.freader.widget.PageView;
@@ -53,7 +50,6 @@ import java.util.List;
  */
 public class ReadActivity extends BaseActivity<ReadPresenter>
         implements IReadContract.View, View.OnClickListener {
-    private static final String TAG = "ReadActivity";
     private static final String LOADING_TEXT = "正在加载中…";
 
     public static final String KEY_NOVEL_URL = "read_key_novel_url";
@@ -222,9 +218,7 @@ public class ReadActivity extends BaseActivity<ReadPresenter>
 
             @Override
             public void next() {
-                if (mType == 0) {
-                    nextNet();
-                } else if (mType == 1) {
+                if (mType == 1) {
                     showShortToast("已经到最后了");
                 } else if (mType == 2){
                     nextEpub();
@@ -233,9 +227,7 @@ public class ReadActivity extends BaseActivity<ReadPresenter>
 
             @Override
             public void pre() {
-                if (mType == 0) {
-                    preNet();
-                } else if (mType == 1){
+                if (mType == 1){
                     showShortToast("已经到最前了");
                 } else if (mType == 2){
                     preEpub();
@@ -315,10 +307,7 @@ public class ReadActivity extends BaseActivity<ReadPresenter>
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 double scale = (double) progress / 100f;
                 if (mIsUpdateChapter) {
-                    if (mType == 0) {   // 网络小说
-                        mChapterIndex = (int) ((mNetCatalogList.size() - 1) * scale);
-                        mCatalogProgressTv.setText(mNetCatalogList.get(mChapterIndex));
-                    } else if (mType == 1) {    // 本地 txt
+                    if (mType == 1) {    // 本地 txt
                         mTxtNovelProgress = (float) scale;
                         String s = String.valueOf(scale * 100);
                         mCatalogProgressTv.setText(s.substring(0, Math.min(5, s.length())) + "%");
@@ -339,7 +328,7 @@ public class ReadActivity extends BaseActivity<ReadPresenter>
             public void onStopTrackingTouch(SeekBar seekBar) {
                 mIsUpdateChapter = false;
                 mCatalogProgressTv.setVisibility(View.GONE);
-                if (mType == 0 || mType == 2) {
+                if (mType == 2) {
                     showChapter();
                 } else if (mType == 1) {
                     mPageView.jumpWithProgress(mTxtNovelProgress);
@@ -427,10 +416,7 @@ public class ReadActivity extends BaseActivity<ReadPresenter>
 
     @Override
     protected void doAfterInit() {
-        if (mType == 0) {
-            // 先通过小说 url 获取所有章节 url 信息
-            mPresenter.getChapterList(UrlObtainer.getCatalogInfo(mNovelUrl));
-        } else if (mType == 1){
+        if (mType == 1){
             // 通过 FilePath 读取本地小说
             mPresenter.loadTxt(mNovelUrl);
         } else if (mType == 2) {
@@ -468,7 +454,7 @@ public class ReadActivity extends BaseActivity<ReadPresenter>
             if (mIsReverse) {   // 如果倒置了目录的话，需要倒置章节索引
                 mChapterIndex = mChapterUrlList.size() - 1 - mChapterIndex;
             }
-            if (mType == 0 || mType == 1) {
+            if (mType == 1) {
                 BookshelfNovelDbData dbData = new BookshelfNovelDbData(mNovelUrl, mName,
                         mCover, mChapterIndex, mPageView.getPosition(), mType);
                 mDbManager.insertBookshelfNovel(dbData);
@@ -600,6 +586,7 @@ public class ReadActivity extends BaseActivity<ReadPresenter>
             return;
         }
         mParentPath = opfData.getParentPath();
+
         // 解析 ncx 文件，得到小说目录
         try {
             mEpubTocList = EpubUtils.getTocData(opfData.getNcx());
@@ -613,6 +600,7 @@ public class ReadActivity extends BaseActivity<ReadPresenter>
             return;
         }
         mOpfData = opfData;
+
         // 获取具体章节数据
         mPresenter.getEpubChapterData(mParentPath, mOpfData.getSpine().get(mChapterIndex));
     }
@@ -661,25 +649,7 @@ public class ReadActivity extends BaseActivity<ReadPresenter>
         if (mIsLoadingChapter) {    // 已经在加载了
             return;
         }
-        if (mType == 0) {   // 显示网络小说
-            mPosition = 0;     // 归零
-            mPageView.clear();              // 清除当前文字
-            mStateTv.setVisibility(View.VISIBLE);
-            mStateTv.setText(LOADING_TEXT);
-            mIsLoadingChapter = true;
-            if (!mChapterUrlList.isEmpty()) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mPresenter.getDetailedChapterData(UrlObtainer.getDetailedChapter(
-                                mChapterUrlList.get(mChapterIndex)));
-                    }
-                }, 200);
-            } else {
-                mStateTv.setText("加载失败");
-                mIsLoadingChapter = false;
-            }
-        } else if (mType == 2) {    // 显示 epub 小说
+        if (mType == 2) {    // 显示 epub 小说
             // 记得归零！！！
             mPosition = 0;
             mSecondPosition = 0;
@@ -863,19 +833,14 @@ public class ReadActivity extends BaseActivity<ReadPresenter>
                 break;
             case R.id.tv_read_previous_chapter:
                 // 加载上一章节
-                if (mType == 0) {
-                    preNet();
-                } else if (mType == 2) {
+                if (mType == 2) {
                     preEpub();
                 } else if (mType == 1) {
                     showShortToast("本地 TXT 小说暂不支持该功能");
                 }
                 break;
             case R.id.tv_read_next_chapter:
-                // 加载下一章节
-                if (mType == 0) {
-                    nextNet();
-                } else if (mType == 2) {
+                if (mType == 2) {
                     nextEpub();
                 } else if (mType == 1) {
                     showShortToast("本地 TXT 小说暂不支持该功能");
@@ -884,17 +849,7 @@ public class ReadActivity extends BaseActivity<ReadPresenter>
             case R.id.iv_read_catalog:
             case R.id.tv_read_catalog:
                 // 目录
-                if (mType == 0) {
-                    // 跳转到目录页面，并且将自己的引用传递给它
-                    Event<HoldReadActivityEvent> event = new Event<>(EventBusCode.CATALOG_HOLD_READ_ACTIVITY,
-                            new HoldReadActivityEvent(ReadActivity.this));
-                    EventBusUtil.sendStickyEvent(event);
-                    Intent intent = new Intent(ReadActivity.this, CatalogActivity.class);
-                    intent.putExtra(CatalogActivity.KEY_URL, mNovelUrl);    // 传递当前小说的 url
-                    intent.putExtra(CatalogActivity.KEY_NAME, mName);  // 传递当前小说的名字
-                    intent.putExtra(CatalogActivity.KEY_COVER, mCover); // 传递当前小说的封面
-                    startActivity(intent);
-                } else if (mType == 1) {
+                if (mType == 1) {
                     showShortToast("本地 TXT 小说暂不支持该功能");
                 } else if (mType == 2) {
                     // 跳转到 epub 目录界面
@@ -1032,12 +987,7 @@ public class ReadActivity extends BaseActivity<ReadPresenter>
         mPageView.setTextColor(getResources().getColor(R.color.read_night_mode_text));
         mPageView.setBackBgColor(getResources().getColor(R.color.read_night_mode_back_bg));
         mPageView.setBackTextColor(getResources().getColor(R.color.read_night_mode_back_text));
-        mPageView.post(new Runnable() {
-            @Override
-            public void run() {
-                mPageView.updateBitmap();
-            }
-        });
+        mPageView.post(() -> mPageView.updateBitmap());
     }
 
     /**
@@ -1154,18 +1104,6 @@ public class ReadActivity extends BaseActivity<ReadPresenter>
         showChapter();
     }
 
-    /**
-     * 网络小说加载下一章节
-     */
-    private void nextNet() {
-        if (mChapterIndex == mChapterUrlList.size() - 1) {
-            showShortToast("已经到最后了");
-            return;
-        }
-        // 加载下一章节
-        mChapterIndex++;
-        showChapter();
-    }
 
     /**
      * Epub 小说加载下一章节
@@ -1185,11 +1123,7 @@ public class ReadActivity extends BaseActivity<ReadPresenter>
      */
     private void updateChapterProgress() {
         int progress = 0;
-        if (mType == 0) {   // 网络小说
-            if (!mNetCatalogList.isEmpty()) {
-                progress = (int) (100 * ((float) mChapterIndex / (mNetCatalogList.size() - 1)));
-            }
-        } else if (mType == 1) {    // 本地 txt
+        if (mType == 1) {    // 本地 txt
             if (mNovelProgress.equals("")) {
                 if (mNovelContent.length() != 0) {
                     progress = (int) (100 * (float)mPosition / (mNovelContent.length() - 1));

@@ -232,23 +232,7 @@ public class BookshelfFragment extends BaseFragment<BookshelfPresenter>
             String fileName = file.getName();
             Log.d(TAG, "onActivityResult: fileLen = " + file.length());
             String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);  // 后缀名
-            if (suffix.equals("txt")) {
-                if (mDbManager.isExistInBookshelfNovel(filePath)) {
-                    showShortToast("该小说已导入");
-                    return;
-                }
-                if (FileUtil.getFileSize(file) > 100) {
-                    showShortToast("文件过大");
-                    return;
-                }
-                // 将该小说的数据存入数据库
-                BookshelfNovelDbData dbData = new BookshelfNovelDbData(filePath, file.getName(),
-                        "", 0, 0, 1);
-                mDbManager.insertBookshelfNovel(dbData);
-                // 更新列表
-                mPresenter.queryAllBook();
-            }
-            else if (suffix.equals("epub")) {
+            if (suffix.equals("epub")) {
                 if (mDbManager.isExistInBookshelfNovel(filePath)) {
                     showShortToast("该小说已导入");
                     return;

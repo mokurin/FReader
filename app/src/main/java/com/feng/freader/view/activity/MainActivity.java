@@ -29,9 +29,6 @@ import com.feng.freader.view.fragment.main.BookshelfFragment;
 import com.feng.freader.view.fragment.main.MoreFragment;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener{
-
-    private static final String TAG = "fzh";
-
     private static final int DUR_BOTTOM_BAR_ICON_ANIM = 500;
     private static final int REQUEST_CODE_SD = 1;
 
@@ -255,6 +252,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                     ft.add(R.id.fv_main_fragment_container, mMoreFragment);
                 }
                 showFragment = mMoreFragment;
+
                 // 通知 More 页面更新相关信息
                 Event<MoreIntoEvent> moreEvent = new Event<>(EventBusCode.MORE_INTO,
                         new MoreIntoEvent());

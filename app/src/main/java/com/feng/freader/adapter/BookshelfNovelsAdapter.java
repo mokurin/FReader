@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,19 +12,14 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.feng.freader.R;
 import com.feng.freader.entity.data.BookshelfNovelDbData;
 import com.feng.freader.util.FileUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class BookshelfNovelsAdapter extends RecyclerView.Adapter {
-    private static final String TAG = "BookshelfNovelsAdapter";
-
     private Context mContext;
     private List<BookshelfNovelDbData> mDataList;
     private List<Boolean> mCheckedList;
@@ -68,16 +62,8 @@ public class BookshelfNovelsAdapter extends RecyclerView.Adapter {
             contentViewHolder.checkBox.setVisibility(View.GONE);
         }
         contentViewHolder.name.setText(mDataList.get(i).getName());
-        if (mDataList.get(i).getType() == 0) {  // 网络小说
-            Glide.with(mContext)
-                    .load(mDataList.get(i).getCover())
-                    .apply(new RequestOptions()
-                            .placeholder(R.drawable.cover_place_holder)
-                            .error(R.drawable.cover_error))
-                    .into(contentViewHolder.cover);
-        } else if (mDataList.get(i).getType() == 1){    // 本地 txt 小说
-            contentViewHolder.cover.setImageResource(R.drawable.local_txt);
-        } else if (mDataList.get(i).getType() == 2) {   // 本地 epub 小说
+        if (mDataList.get(i).getType() == 2) {
+            // 本地 epub 小说
             if (mDataList.get(i).getCover().equals("")) {
                 contentViewHolder.cover.setImageResource(R.drawable.local_epub);
             } else {

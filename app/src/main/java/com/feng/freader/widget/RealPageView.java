@@ -11,31 +11,23 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
-import android.widget.Scroller;
-import android.widget.VideoView;
 
 import com.feng.freader.R;
-import com.feng.freader.entity.data.CatalogData;
 import com.feng.freader.entity.epub.EpubData;
-import com.feng.freader.util.ScreenUtil;
 
 import java.util.List;
 
-public class RealPageView extends PageView{
-    private static final String TAG = "RealPageView";
-
+//小说阅读界面
+public class RealPageView extends PageView {
     private STYLE mCurrStyle = STYLE.NONE;     // 记录当前的点击样式
+
     public enum STYLE {
         LEFT, CENTER, RIGHT, TOP_RIGHT, CENTER_RIGHT, BOTTOM_RIGHT, NONE
     }
@@ -51,7 +43,7 @@ public class RealPageView extends PageView{
     private Path pathB;
     private Path pathC;
 
-    private MyPoint a,f,g,e,h,c,j,b,k,d,i;
+    private MyPoint a, f, g, e, h, c, j, b, k, d, i;
     float lPathAShadowDis = 0;      // A 区域左阴影矩形短边长度参考值
     float rPathAShadowDis = 0;      // A 区域右阴影矩形短边长度参考值
 
@@ -101,7 +93,7 @@ public class RealPageView extends PageView{
         init(context);
     }
 
-    private void init(Context context){
+    private void init(Context context) {
         a = new MyPoint();
         f = new MyPoint();
         g = new MyPoint();
@@ -152,34 +144,35 @@ public class RealPageView extends PageView{
     /**
      * 初始化各区域阴影 GradientDrawable
      */
-    private void createGradientDrawable(){
+    private void createGradientDrawable() {
         int deepColor = 0x40333333;
         int lightColor = 0x02333333;
-        int[] gradientColors = new int[]{lightColor,deepColor};//渐变颜色数组
+        int[] gradientColors = new int[]{lightColor, deepColor};//渐变颜色数组
         drawableLeftTopRight = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradientColors);
         drawableLeftTopRight.setGradientType(GradientDrawable.LINEAR_GRADIENT);
         drawableLeftLowerRight = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, gradientColors);
         drawableLeftLowerRight.setGradientType(GradientDrawable.LINEAR_GRADIENT);
 
-        gradientColors =  new int[]{deepColor,lightColor,lightColor};
+        gradientColors = new int[]{deepColor, lightColor, lightColor};
         drawableRightTopRight = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, gradientColors);
         drawableRightTopRight.setGradientType(GradientDrawable.LINEAR_GRADIENT);
         drawableRightLowerRight = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, gradientColors);
         drawableRightLowerRight.setGradientType(GradientDrawable.LINEAR_GRADIENT);
 
-        gradientColors = new int[]{lightColor,deepColor};//渐变颜色数组
-        drawableHorizontalLowerRight = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradientColors);;
+        gradientColors = new int[]{lightColor, deepColor};//渐变颜色数组
+        drawableHorizontalLowerRight = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradientColors);
+        ;
         drawableHorizontalLowerRight.setGradientType(GradientDrawable.LINEAR_GRADIENT);
 
         deepColor = 0x99111111;
         lightColor = 0x00111111;
-        gradientColors = new int[] {deepColor,lightColor};//渐变颜色数组
-        drawableBTopRight =new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,gradientColors);
+        gradientColors = new int[]{deepColor, lightColor};//渐变颜色数组
+        drawableBTopRight = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradientColors);
         drawableBTopRight.setGradientType(GradientDrawable.LINEAR_GRADIENT);//线性渐变
-        drawableBLowerRight =new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT,gradientColors);
+        drawableBLowerRight = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, gradientColors);
         drawableBLowerRight.setGradientType(GradientDrawable.LINEAR_GRADIENT);
 
-        gradientColors = new int[]{lightColor,deepColor};//渐变颜色数组
+        gradientColors = new int[]{lightColor, deepColor};//渐变颜色数组
         drawableCTopRight = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradientColors);
         drawableCTopRight.setGradientType(GradientDrawable.LINEAR_GRADIENT);
         drawableCLowerRight = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, gradientColors);
@@ -189,7 +182,7 @@ public class RealPageView extends PageView{
     /**
      * 绘制正面内容
      */
-    private void drawBitmap(){
+    private void drawBitmap() {
         // 绘制 A 区域
         Canvas mCanvas = new Canvas(mContentABitmap);
         mCanvas.drawPath(getPathDefault(), mBgPaint);
@@ -251,17 +244,17 @@ public class RealPageView extends PageView{
                 canvas.drawBitmap(mContentABitmap, 0, 0, null);
             }
         } else if (mTurnType == TURN_TYPE.REAL) {
-            if(a.x==-1 && a.y==-1){
-                drawPathAContent(canvas,getPathDefault());
-            }else {
-                if(f.x==viewWidth && f.y==0){
-                    drawPathAContent(canvas,getPathATopRight());
-                    drawPathCContent(canvas,getPathATopRight());
-                    drawPathBContent(canvas,getPathATopRight());
-                }else if(f.x==viewWidth && f.y==viewHeight){
-                    drawPathAContent(canvas,getPathABottomRight());
-                    drawPathCContent(canvas,getPathABottomRight());
-                    drawPathBContent(canvas,getPathABottomRight());
+            if (a.x == -1 && a.y == -1) {
+                drawPathAContent(canvas, getPathDefault());
+            } else {
+                if (f.x == viewWidth && f.y == 0) {
+                    drawPathAContent(canvas, getPathATopRight());
+                    drawPathCContent(canvas, getPathATopRight());
+                    drawPathBContent(canvas, getPathATopRight());
+                } else if (f.x == viewWidth && f.y == viewHeight) {
+                    drawPathAContent(canvas, getPathABottomRight());
+                    drawPathCContent(canvas, getPathABottomRight());
+                    drawPathBContent(canvas, getPathABottomRight());
                 }
             }
         }
@@ -269,13 +262,14 @@ public class RealPageView extends PageView{
         // 计算当前进度
         calCurrProgress();
     }
-    
+
     /**
      * 计算各点坐标
+     *
      * @param a
      * @param f
      */
-    private void calcPointsXY(MyPoint a, MyPoint f){
+    private void calcPointsXY(MyPoint a, MyPoint f) {
         g.x = (a.x + f.x) / 2;
         g.y = (a.y + f.y) / 2;
 
@@ -291,8 +285,8 @@ public class RealPageView extends PageView{
         j.x = f.x;
         j.y = h.y - (f.y - h.y) / 2;
 
-        b = getIntersectionPoint(a,e,c,j);
-        k = getIntersectionPoint(a,h,c,j);
+        b = getIntersectionPoint(a, e, c, j);
+        k = getIntersectionPoint(a, h, c, j);
 
         d.x = (c.x + 2 * e.x + b.x) / 4;
         d.y = (2 * e.y + c.y + b.y) / 4;
@@ -301,23 +295,23 @@ public class RealPageView extends PageView{
         i.y = (2 * h.y + j.y + k.y) / 4;
 
         //计算d点到直线ae的距离
-        float lA = a.y-e.y;
-        float lB = e.x-a.x;
-        float lC = a.x*e.y-e.x*a.y;
-        lPathAShadowDis = Math.abs((lA*d.x+lB*d.y+lC)/(float) Math.hypot(lA,lB));
+        float lA = a.y - e.y;
+        float lB = e.x - a.x;
+        float lC = a.x * e.y - e.x * a.y;
+        lPathAShadowDis = Math.abs((lA * d.x + lB * d.y + lC) / (float) Math.hypot(lA, lB));
         //计算i点到ah的距离
-        float rA = a.y-h.y;
-        float rB = h.x-a.x;
-        float rC = a.x*h.y-h.x*a.y;
-        rPathAShadowDis = Math.abs((rA*i.x+rB*i.y+rC)/(float) Math.hypot(rA,rB));
+        float rA = a.y - h.y;
+        float rB = h.x - a.x;
+        float rC = a.x * h.y - h.x * a.y;
+        rPathAShadowDis = Math.abs((rA * i.x + rB * i.y + rC) / (float) Math.hypot(rA, rB));
     }
 
     /**
      * 计算两线段相交点坐标
      */
     private MyPoint getIntersectionPoint(MyPoint lineOne_My_pointOne, MyPoint lineOne_My_pointTwo,
-                                         MyPoint lineTwo_My_pointOne, MyPoint lineTwo_My_pointTwo){
-        float x1,y1,x2,y2,x3,y3,x4,y4;
+                                         MyPoint lineTwo_My_pointOne, MyPoint lineTwo_My_pointTwo) {
+        float x1, y1, x2, y2, x3, y3, x4, y4;
         x1 = lineOne_My_pointOne.x;
         y1 = lineOne_My_pointOne.y;
         x2 = lineOne_My_pointTwo.x;
@@ -327,18 +321,18 @@ public class RealPageView extends PageView{
         x4 = lineTwo_My_pointTwo.x;
         y4 = lineTwo_My_pointTwo.y;
 
-        float pointX =((x1 - x2) * (x3 * y4 - x4 * y3) - (x3 - x4) * (x1 * y2 - x2 * y1))
+        float pointX = ((x1 - x2) * (x3 * y4 - x4 * y3) - (x3 - x4) * (x1 * y2 - x2 * y1))
                 / ((x3 - x4) * (y1 - y2) - (x1 - x2) * (y3 - y4));
-        float pointY =((y1 - y2) * (x3 * y4 - x4 * y3) - (x1 * y2 - x2 * y1) * (y3 - y4))
+        float pointY = ((y1 - y2) * (x3 * y4 - x4 * y3) - (x1 * y2 - x2 * y1) * (y3 - y4))
                 / ((y1 - y2) * (x3 - x4) - (x1 - x2) * (y3 - y4));
 
-        return  new MyPoint(pointX,pointY);
+        return new MyPoint(pointX, pointY);
     }
 
     /**
      * 绘制区域 A（从右下角翻页）
      */
-    private Path getPathABottomRight(){
+    private Path getPathABottomRight() {
         if (pathA == null) {
             pathA = new Path();
         } else {
@@ -346,12 +340,12 @@ public class RealPageView extends PageView{
         }
         Path pathA = new Path();
         pathA.lineTo(0, viewHeight);    //移动到左下角
-        pathA.lineTo(c.x,c.y);              //移动到c点
-        pathA.quadTo(e.x,e.y,b.x,b.y);      //从c到b画二阶贝塞尔曲线，控制点为e
-        pathA.lineTo(a.x,a.y);              //移动到a点
-        pathA.lineTo(k.x,k.y);              //移动到k点
-        pathA.quadTo(h.x,h.y,j.x,j.y);      //从k到j画二阶贝塞尔曲线，控制点为h
-        pathA.lineTo(viewWidth,0);      //移动到右上角
+        pathA.lineTo(c.x, c.y);              //移动到c点
+        pathA.quadTo(e.x, e.y, b.x, b.y);      //从c到b画二阶贝塞尔曲线，控制点为e
+        pathA.lineTo(a.x, a.y);              //移动到a点
+        pathA.lineTo(k.x, k.y);              //移动到k点
+        pathA.quadTo(h.x, h.y, j.x, j.y);      //从k到j画二阶贝塞尔曲线，控制点为h
+        pathA.lineTo(viewWidth, 0);      //移动到右上角
         pathA.close();  //闭合区域
         return pathA;
     }
@@ -359,18 +353,18 @@ public class RealPageView extends PageView{
     /**
      * 绘制区域 A（从右上角翻页）
      */
-    private Path getPathATopRight(){
+    private Path getPathATopRight() {
         if (pathA == null) {
             pathA = new Path();
         } else {
             pathA.reset();
         }
-        pathA.lineTo(c.x,c.y);              //移动到c点
-        pathA.quadTo(e.x,e.y,b.x,b.y);      //从c到b画二阶贝塞尔曲线，控制点为e
-        pathA.lineTo(a.x,a.y);              //移动到a点
-        pathA.lineTo(k.x,k.y);              //移动到k点
-        pathA.quadTo(h.x,h.y,j.x,j.y);      //从k到j画二阶贝塞尔曲线，控制点为h
-        pathA.lineTo(viewWidth,viewHeight); //移动到右下角
+        pathA.lineTo(c.x, c.y);              //移动到c点
+        pathA.quadTo(e.x, e.y, b.x, b.y);      //从c到b画二阶贝塞尔曲线，控制点为e
+        pathA.lineTo(a.x, a.y);              //移动到a点
+        pathA.lineTo(k.x, k.y);              //移动到k点
+        pathA.quadTo(h.x, h.y, j.x, j.y);      //从k到j画二阶贝塞尔曲线，控制点为h
+        pathA.lineTo(viewWidth, viewHeight); //移动到右下角
         pathA.lineTo(0, viewHeight);    //移动到左下角
         pathA.close();  //闭合区域
         return pathA;
@@ -379,17 +373,17 @@ public class RealPageView extends PageView{
     /**
      * 绘制区域 C
      */
-    private Path getPathC(){
+    private Path getPathC() {
         if (pathC == null) {
             pathC = new Path();
         } else {
             pathC.reset();
         }
-        pathC.moveTo(i.x,i.y);//移动到i点
-        pathC.lineTo(d.x,d.y);//移动到d点
-        pathC.lineTo(b.x,b.y);//移动到b点
-        pathC.lineTo(a.x,a.y);//移动到a点
-        pathC.lineTo(k.x,k.y);//移动到k点
+        pathC.moveTo(i.x, i.y);//移动到i点
+        pathC.lineTo(d.x, d.y);//移动到d点
+        pathC.lineTo(b.x, b.y);//移动到b点
+        pathC.lineTo(a.x, a.y);//移动到a点
+        pathC.lineTo(k.x, k.y);//移动到k点
         pathC.close();//闭合区域
         return pathC;
     }
@@ -397,15 +391,15 @@ public class RealPageView extends PageView{
     /**
      * 绘制默认的界面
      */
-    private Path getPathDefault(){
+    private Path getPathDefault() {
         if (pathA == null) {
             pathA = new Path();
         } else {
             pathA.reset();
         }
         pathA.lineTo(0, viewHeight);
-        pathA.lineTo(viewWidth,viewHeight);
-        pathA.lineTo(viewWidth,0);
+        pathA.lineTo(viewWidth, viewHeight);
+        pathA.lineTo(viewWidth, 0);
         pathA.close();
         return pathA;
     }
@@ -464,19 +458,19 @@ public class RealPageView extends PageView{
      * 处理仿真翻页的事件分发
      */
     private void onRealTouchEvent(MotionEvent event) {
-        switch (event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mLastX = (int) event.getX();
                 mIsLoadNextPage = true;
-                if(event.getX() > viewWidth - viewWidth / 3 && event.getY() < viewHeight / 3){  //从上半部分翻页
+                if (event.getX() > viewWidth - viewWidth / 3 && event.getY() < viewHeight / 3) {  //从上半部分翻页
                     mCurrStyle = STYLE.TOP_RIGHT;
-                    setTouchPoint(event.getX(),event.getY());
-                } else if(event.getX() > viewWidth - viewWidth / 3 && event.getY() >= viewHeight - viewHeight / 3) {  //从下半部分翻页
+                    setTouchPoint(event.getX(), event.getY());
+                } else if (event.getX() > viewWidth - viewWidth / 3 && event.getY() >= viewHeight - viewHeight / 3) {  //从下半部分翻页
                     mCurrStyle = STYLE.BOTTOM_RIGHT;
-                    setTouchPoint(event.getX(),event.getY());
-                } else if(event.getX() > viewWidth - viewWidth / 3) {  //从中间翻页
+                    setTouchPoint(event.getX(), event.getY());
+                } else if (event.getX() > viewWidth - viewWidth / 3) {  //从中间翻页
                     mCurrStyle = STYLE.CENTER_RIGHT;
-                    setTouchPoint(event.getX(),event.getY());
+                    setTouchPoint(event.getX(), event.getY());
                 } else if (event.getX() < viewWidth / 3) {
                     mCurrStyle = STYLE.LEFT;
                 } else {
@@ -485,7 +479,7 @@ public class RealPageView extends PageView{
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (mCurrStyle != STYLE.LEFT && mCurrStyle != STYLE.CENTER) {
-                    setTouchPoint(event.getX(),event.getY());
+                    setTouchPoint(event.getX(), event.getY());
                 }
                 if (Math.abs(event.getX() - mLastX) >= 5) {
                     mIsLoadNextPage = event.getX() < mLastX;
@@ -548,17 +542,17 @@ public class RealPageView extends PageView{
     /**
      * 翻页动画
      */
-    private void startTurnAnim(){
+    private void startTurnAnim() {
         ValueAnimator va = null;
         switch (mCurrStyle) {
             case TOP_RIGHT:
                 va = ValueAnimator.ofObject(getTurnVA(),
-                        new PointF(a.x, a.y), new PointF(- (float) viewWidth/2, 0));
+                        new PointF(a.x, a.y), new PointF(-(float) viewWidth / 2, 0));
                 break;
             case CENTER_RIGHT:
             case BOTTOM_RIGHT:
                 va = ValueAnimator.ofObject(getTurnVA(),
-                        new PointF(a.x, a.y), new PointF(- (float) viewWidth/2, viewHeight));
+                        new PointF(a.x, a.y), new PointF(-(float) viewWidth / 2, viewHeight));
                 break;
         }
         va.setDuration(300);
@@ -600,7 +594,7 @@ public class RealPageView extends PageView{
             return;
         }
         // 进行动画
-        ValueAnimator va = ValueAnimator.ofFloat((float) viewWidth/5, viewWidth-1);
+        ValueAnimator va = ValueAnimator.ofFloat((float) viewWidth / 5, viewWidth - 1);
         va.setDuration(300);
         va.setInterpolator(new LinearInterpolator());
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -648,32 +642,26 @@ public class RealPageView extends PageView{
     }
 
     private TypeEvaluator getTurnVA() {
-        return new TypeEvaluator<PointF>() {
-            @Override
-            public PointF evaluate(float fraction, PointF startValue, PointF endValue) {
-                float startX = startValue.x;
-                float startY = startValue.y;
-                float endX = endValue.x;
-                float endY = endValue.y;
-                float currX = startX + (endX - startX) * fraction;
-                float currY = (currX <= (endX - endX/4))? endY : startY + (endY - startY) * fraction;
-                return new PointF(currX, currY);
-            }
+        return (TypeEvaluator<PointF>) (fraction, startValue, endValue) -> {
+            float startX = startValue.x;
+            float startY = startValue.y;
+            float endX = endValue.x;
+            float endY = endValue.y;
+            float currX = startX + (endX - startX) * fraction;
+            float currY = (currX <= (endX - endX / 4)) ? endY : startY + (endY - startY) * fraction;
+            return new PointF(currX, currY);
         };
     }
 
     private TypeEvaluator getCancelVA() {
-        return new TypeEvaluator<PointF>() {
-            @Override
-            public PointF evaluate(float fraction, PointF startValue, PointF endValue) {
-                float startX = startValue.x;
-                float startY = startValue.y;
-                float endX = endValue.x;
-                float endY = endValue.y;
-                float currX = startX + (endX - startX) * fraction;
-                float currY = startY + (endY - startY) * fraction;
-                return new PointF(currX, currY);
-            }
+        return (TypeEvaluator<PointF>) (fraction, startValue, endValue) -> {
+            float startX = startValue.x;
+            float startY = startValue.y;
+            float endX = endValue.x;
+            float endY = endValue.y;
+            float currX = startX + (endX - startX) * fraction;
+            float currY = startY + (endY - startY) * fraction;
+            return new PointF(currX, currY);
         };
     }
 
@@ -700,29 +688,29 @@ public class RealPageView extends PageView{
     /**
      * 设置触摸点并更新视图
      */
-    public void setTouchPoint(float x, float y){
+    public void setTouchPoint(float x, float y) {
         a.x = x;
         a.y = y;
-        switch (mCurrStyle){
+        switch (mCurrStyle) {
             case TOP_RIGHT:
                 f.x = viewWidth;
                 f.y = 0;
-                calcPointsXY(a,f);
+                calcPointsXY(a, f);
                 // 如果c点x坐标小于0则重新测量a点坐标
-                if(calcPointCX(new MyPoint(x,y),f) < 0){
+                if (calcPointCX(new MyPoint(x, y), f) < 0) {
                     calcPointAByTouchPoint();
-                    calcPointsXY(a,f);
+                    calcPointsXY(a, f);
                 }
                 invalidate();
                 break;
             case BOTTOM_RIGHT:
                 f.x = viewWidth;
                 f.y = viewHeight;
-                calcPointsXY(a,f);
+                calcPointsXY(a, f);
                 // 如果c点x坐标小于0则重新测量a点坐标
-                if(calcPointCX(new MyPoint(x,y),f) < 0){
+                if (calcPointCX(new MyPoint(x, y), f) < 0) {
                     calcPointAByTouchPoint();
-                    calcPointsXY(a,f);
+                    calcPointsXY(a, f);
                 }
                 invalidate();
                 break;
@@ -730,7 +718,7 @@ public class RealPageView extends PageView{
                 a.y = viewHeight - 1;
                 f.x = viewWidth;
                 f.y = viewHeight;
-                calcPointsXY(a,f);
+                calcPointsXY(a, f);
                 invalidate();
                 break;
             default:
@@ -742,24 +730,20 @@ public class RealPageView extends PageView{
     /**
      * 翻页时更新各点位置
      */
-    public void updateTurn(float x, float y){
+    public void updateTurn(float x, float y) {
         a.x = x;
         a.y = y;
-        switch (mCurrStyle){
+        switch (mCurrStyle) {
             case TOP_RIGHT:
                 f.x = viewWidth;
                 f.y = 0;
-                calcPointsXY(a,f);
+                calcPointsXY(a, f);
                 break;
             case BOTTOM_RIGHT:
-                f.x = viewWidth;
-                f.y = viewHeight;
-                calcPointsXY(a,f);
-                break;
             case CENTER_RIGHT:
                 f.x = viewWidth;
                 f.y = viewHeight;
-                calcPointsXY(a,f);
+                calcPointsXY(a, f);
                 break;
             default:
                 break;
@@ -770,19 +754,19 @@ public class RealPageView extends PageView{
     /**
      * 翻页时更新各点位置
      */
-    public void updateLast(float x){
+    public void updateLast(float x) {
         a.x = x;
         a.y = viewHeight - 1;
         f.x = viewWidth;
         f.y = viewHeight;
-        calcPointsXY(a,f);
+        calcPointsXY(a, f);
         invalidate();
     }
 
     /**
      * 回到默认状态
      */
-    public void setDefaultPath(){
+    public void setDefaultPath() {
         a.x = -1;
         a.y = -1;
         invalidate();
@@ -791,8 +775,8 @@ public class RealPageView extends PageView{
     /**
      * 计算 C 点的 X 值
      */
-    private float calcPointCX(MyPoint a, MyPoint f){
-        MyPoint g,e;
+    private float calcPointCX(MyPoint a, MyPoint f) {
+        MyPoint g, e;
         g = new MyPoint();
         e = new MyPoint();
         g.x = (a.x + f.x) / 2;
@@ -807,7 +791,7 @@ public class RealPageView extends PageView{
     /**
      * 如果c点x坐标小于0,根据触摸点重新测量a点坐标
      */
-    private void calcPointAByTouchPoint(){
+    private void calcPointAByTouchPoint() {
         float w0 = viewWidth - c.x;
 
         float w1 = Math.abs(f.x - a.x);
@@ -820,9 +804,12 @@ public class RealPageView extends PageView{
     }
 
     public class MyPoint {
-        float x,y;
-        MyPoint(){}
-        MyPoint(float x, float y){
+        float x, y;
+
+        MyPoint() {
+        }
+
+        MyPoint(float x, float y) {
             this.x = x;
             this.y = y;
         }
@@ -831,95 +818,97 @@ public class RealPageView extends PageView{
     /**
      * 绘制A区域内容
      */
-    private void drawPathAContent(Canvas canvas, Path pathA){
+    private void drawPathAContent(Canvas canvas, Path pathA) {
         canvas.save();
         canvas.clipPath(pathA, Region.Op.INTERSECT);//对绘制内容进行裁剪，取和A区域的交集
         canvas.drawBitmap(mContentABitmap, 0, 0, null);
 
-        if(mCurrStyle.equals(STYLE.CENTER_RIGHT)){
-            drawPathAHorizontalShadow(canvas,pathA);
-        }else {
-            drawPathALeftShadow(canvas,pathA);
-            drawPathARightShadow(canvas,pathA);
+        if (mCurrStyle.equals(STYLE.CENTER_RIGHT)) {
+            drawPathAHorizontalShadow(canvas, pathA);
+        } else {
+            drawPathALeftShadow(canvas, pathA);
+            drawPathARightShadow(canvas, pathA);
         }
         canvas.restore();
     }
 
     /**
      * 绘制A区域左阴影
+     *
      * @param canvas
      */
-    private void drawPathALeftShadow(Canvas canvas, Path pathA){
+    private void drawPathALeftShadow(Canvas canvas, Path pathA) {
         int left;
         int right;
         int top = (int) e.y;
-        int bottom = (int) (e.y+viewHeight);
+        int bottom = (int) (e.y + viewHeight);
 
         GradientDrawable gradientDrawable;
         if (mCurrStyle.equals(STYLE.TOP_RIGHT)) {
             gradientDrawable = drawableLeftTopRight;
-            left = (int) (e.x - lPathAShadowDis /2);
+            left = (int) (e.x - lPathAShadowDis / 2);
             right = (int) (e.x);
         } else {
             gradientDrawable = drawableLeftLowerRight;
             left = (int) (e.x);
-            right = (int) (e.x + lPathAShadowDis /2);
+            right = (int) (e.x + lPathAShadowDis / 2);
         }
 
         // 裁剪出我们需要的区域
         canvas.restore();
         canvas.save();
         Path mPath = new Path();
-        mPath.moveTo(a.x- Math.max(rPathAShadowDis, lPathAShadowDis) /2,a.y);
-        mPath.lineTo(d.x,d.y);
-        mPath.lineTo(e.x,e.y);
-        mPath.lineTo(a.x,a.y);
+        mPath.moveTo(a.x - Math.max(rPathAShadowDis, lPathAShadowDis) / 2, a.y);
+        mPath.lineTo(d.x, d.y);
+        mPath.lineTo(e.x, e.y);
+        mPath.lineTo(a.x, a.y);
         mPath.close();
         canvas.clipPath(pathA);
         canvas.clipPath(mPath, Region.Op.INTERSECT);
 
-        float mDegrees = (float) Math.toDegrees(Math.atan2(e.x-a.x, a.y-e.y));
+        float mDegrees = (float) Math.toDegrees(Math.atan2(e.x - a.x, a.y - e.y));
         canvas.rotate(mDegrees, e.x, e.y);
-        gradientDrawable.setBounds(left,top,right,bottom);
+        gradientDrawable.setBounds(left, top, right, bottom);
         gradientDrawable.draw(canvas);
     }
 
     /**
      * 绘制A区域右阴影
+     *
      * @param canvas
      */
-    private void drawPathARightShadow(Canvas canvas, Path pathA){
+    private void drawPathARightShadow(Canvas canvas, Path pathA) {
 
         float viewDiagonalLength = (float) Math.hypot(viewWidth, viewHeight);//view对角线长度
         int left = (int) h.x;
-        int right = (int) (h.x + viewDiagonalLength*10);//需要足够长的长度
+        int right = (int) (h.x + viewDiagonalLength * 10);//需要足够长的长度
         int top;
         int bottom;
 
         GradientDrawable gradientDrawable;
         if (mCurrStyle.equals(STYLE.TOP_RIGHT)) {
             gradientDrawable = drawableRightTopRight;
-            top = (int) (h.y- rPathAShadowDis /2);
+            top = (int) (h.y - rPathAShadowDis / 2);
             bottom = (int) h.y;
         } else {
             gradientDrawable = drawableRightLowerRight;
             top = (int) h.y;
-            bottom = (int) (h.y+ rPathAShadowDis /2);
+            bottom = (int) (h.y + rPathAShadowDis / 2);
         }
-        gradientDrawable.setBounds(left,top,right,bottom);
+        gradientDrawable.setBounds(left, top, right, bottom);
 
         //裁剪出我们需要的区域
         canvas.restore();
         canvas.save();
         Path mPath = new Path();
-        mPath.moveTo(a.x- Math.max(rPathAShadowDis, lPathAShadowDis) /2,a.y);
-        mPath.lineTo(h.x,h.y);
-        mPath.lineTo(a.x,a.y);
+        mPath.moveTo(a.x - Math.max(rPathAShadowDis, lPathAShadowDis) / 2, a.y);
+        mPath.lineTo(h.x, h.y);
+        mPath.lineTo(a.x, a.y);
         mPath.close();
         canvas.clipPath(pathA);
         canvas.clipPath(mPath, Region.Op.INTERSECT);
 
-        float mDegrees = (float) Math.toDegrees(Math.atan2(a.y-h.y, a.x-h.x));
+        float mDegrees = (float) Math.toDegrees(Math.atan2(a.y - h.y, a.x - h.x));
         canvas.rotate(mDegrees, h.x, h.y);
         gradientDrawable.draw(canvas);
     }
@@ -927,20 +916,20 @@ public class RealPageView extends PageView{
     /**
      * 绘制A区域水平翻页阴影
      */
-    private void drawPathAHorizontalShadow(Canvas canvas, Path pathA){
+    private void drawPathAHorizontalShadow(Canvas canvas, Path pathA) {
         int maxShadowWidth = 30;//阴影矩形最大的宽度
-        int left = (int) (a.x - Math.min(maxShadowWidth,(rPathAShadowDis/2)));
+        int left = (int) (a.x - Math.min(maxShadowWidth, (rPathAShadowDis / 2)));
         int right = (int) (a.x);
         int top = 0;
         int bottom = viewHeight;
         GradientDrawable gradientDrawable = drawableHorizontalLowerRight;
-        gradientDrawable.setBounds(left,top,right,bottom);
+        gradientDrawable.setBounds(left, top, right, bottom);
 
         canvas.restore();
         canvas.save();
         canvas.clipPath(pathA, Region.Op.INTERSECT);
 
-        float mDegrees = (float) Math.toDegrees(Math.atan2(f.x-a.x,f.y-h.y));
+        float mDegrees = (float) Math.toDegrees(Math.atan2(f.x - a.x, f.y - h.y));
         canvas.rotate(mDegrees, a.x, a.y);
         gradientDrawable.draw(canvas);
     }
@@ -948,7 +937,7 @@ public class RealPageView extends PageView{
     /**
      * 绘制B区域内容
      */
-    private void drawPathBContent(Canvas canvas, Path pathA){
+    private void drawPathBContent(Canvas canvas, Path pathA) {
         canvas.save();
         // 裁剪出B区域中不同于与AC区域的部分
         canvas.clipPath(pathA, Region.Op.DIFFERENCE);
@@ -963,11 +952,11 @@ public class RealPageView extends PageView{
     /**
      * 绘制B区域阴影
      */
-    private void drawPathBShadow(Canvas canvas){
+    private void drawPathBShadow(Canvas canvas) {
 
         int deepOffset = 0;//深色端的偏移值
-        float aTof =(float) Math.hypot((a.x - f.x),(a.y - f.y));    //a到f的距离
-        int lightOffset = (int) (aTof/4);//浅色端的偏移值
+        float aTof = (float) Math.hypot((a.x - f.x), (a.y - f.y));    //a到f的距离
+        int lightOffset = (int) (aTof / 4);//浅色端的偏移值
         float viewDiagonalLength = (float) Math.hypot(viewWidth, viewHeight);//对角线长度
 
         int left;
@@ -975,7 +964,7 @@ public class RealPageView extends PageView{
         int top = (int) c.y;
         int bottom = (int) (viewDiagonalLength + c.y);
         GradientDrawable gradientDrawable;
-        if(mCurrStyle.equals(STYLE.TOP_RIGHT)){//f点在右上角
+        if (mCurrStyle.equals(STYLE.TOP_RIGHT)) {//f点在右上角
             //从左向右线性渐变
             gradientDrawable = drawableBTopRight;
             left = (int) (c.x - deepOffset);//c点位于左上角
@@ -983,12 +972,12 @@ public class RealPageView extends PageView{
         } else {
             //从右向左线性渐变
             gradientDrawable = drawableBLowerRight;
-            left = (int) (c.x  - lightOffset);//c点位于左下角
+            left = (int) (c.x - lightOffset);//c点位于左下角
             right = (int) (c.x + deepOffset);
         }
-        gradientDrawable.setBounds(left,top,right,bottom);//设置阴影矩形
+        gradientDrawable.setBounds(left, top, right, bottom);//设置阴影矩形
 
-        float rotateDegrees = (float) Math.toDegrees(Math.atan2(e.x- f.x, h.y - f.y));//旋转角度
+        float rotateDegrees = (float) Math.toDegrees(Math.atan2(e.x - f.x, h.y - f.y));//旋转角度
         canvas.rotate(rotateDegrees, c.x, c.y);//以c为中心点旋转
         gradientDrawable.draw(canvas);
     }
@@ -996,21 +985,21 @@ public class RealPageView extends PageView{
     /**
      * 绘制C区域内容
      */
-    private void drawPathCContent(Canvas canvas, Path pathA){
+    private void drawPathCContent(Canvas canvas, Path pathA) {
         canvas.save();
 
         // 裁剪出C区域不同于A区域的部分
         canvas.clipPath(pathA, Region.Op.DIFFERENCE);
         canvas.clipPath(getPathC());
-        canvas.drawPath(getPathC(),pathCPaint); //绘制背景色
+        canvas.drawPath(getPathC(), pathCPaint); //绘制背景色
 
 
         // 设置 Matrix 矩阵
         // 先关于 y 轴对称，然后进行旋转
-        float eh = (float) Math.hypot(f.x - e.x,h.y - f.y);
+        float eh = (float) Math.hypot(f.x - e.x, h.y - f.y);
         float sin0 = (f.x - e.x) / eh;
         float cos0 = (h.y - f.y) / eh;
-        mMatrixArray[0] = -(1 - 2*sin0*sin0);
+        mMatrixArray[0] = -(1 - 2 * sin0 * sin0);
         mMatrixArray[1] = 2 * sin0 * cos0;
         mMatrixArray[3] = 2 * sin0 * cos0;
         mMatrixArray[4] = 1 - 2 * sin0 * sin0;
@@ -1032,10 +1021,10 @@ public class RealPageView extends PageView{
     /**
      * 绘制C区域阴影，阴影左浅右深
      */
-    private void drawPathCShadow(Canvas canvas){
+    private void drawPathCShadow(Canvas canvas) {
         int deepOffset = 0;//深色端的偏移值
-        float aTof =(float) Math.hypot((a.x - f.x),(a.y - f.y));    //a到f的距离
-        int lightOffset = (int) (aTof/4);//浅色端的偏移值
+        float aTof = (float) Math.hypot((a.x - f.x), (a.y - f.y));    //a到f的距离
+        int lightOffset = (int) (aTof / 4);//浅色端的偏移值
         float viewDiagonalLength = (float) Math.hypot(viewWidth, viewHeight);//对角线长度
 
         int left;
@@ -1043,7 +1032,7 @@ public class RealPageView extends PageView{
         int top = (int) c.y;
         int bottom = (int) (viewDiagonalLength + c.y);
         GradientDrawable gradientDrawable;
-        if(mCurrStyle.equals(STYLE.TOP_RIGHT)){//f点在右上角
+        if (mCurrStyle.equals(STYLE.TOP_RIGHT)) {//f点在右上角
             //从左向右线性渐变
             gradientDrawable = drawableCTopRight;
             left = (int) (c.x - deepOffset);//c点位于左上角
@@ -1051,12 +1040,12 @@ public class RealPageView extends PageView{
         } else {
             //从右向左线性渐变
             gradientDrawable = drawableCLowerRight;
-            left = (int) (c.x  - lightOffset);//c点位于左下角
+            left = (int) (c.x - lightOffset);//c点位于左下角
             right = (int) (c.x + deepOffset);
         }
-        gradientDrawable.setBounds(left,top,right,bottom);//设置阴影矩形
+        gradientDrawable.setBounds(left, top, right, bottom);//设置阴影矩形
 
-        float rotateDegrees = (float) Math.toDegrees(Math.atan2(e.x- f.x, h.y - f.y));//旋转角度
+        float rotateDegrees = (float) Math.toDegrees(Math.atan2(e.x - f.x, h.y - f.y));//旋转角度
         canvas.rotate(rotateDegrees, c.x, c.y);//以c为中心点旋转
         gradientDrawable.draw(canvas);
     }

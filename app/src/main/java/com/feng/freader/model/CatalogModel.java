@@ -5,8 +5,6 @@ import android.util.Log;
 import com.feng.freader.constant.Constant;
 import com.feng.freader.constract.ICatalogContract;
 import com.feng.freader.entity.bean.CatalogBean;
-import com.feng.freader.entity.bean.CategoryNovelsBean;
-import com.feng.freader.entity.data.ANNovelData;
 import com.feng.freader.entity.data.CatalogData;
 import com.feng.freader.http.OkhttpBuilder;
 import com.feng.freader.http.OkhttpCall;

@@ -2,6 +2,7 @@ package com.feng.freader.entity.data;
 
 import java.util.List;
 
+// 目录
 public class CatalogData {
     private List<String> chapterNameList;
     private List<String> chapterUrlList;
