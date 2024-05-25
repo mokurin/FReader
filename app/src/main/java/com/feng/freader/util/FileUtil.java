@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class FileUtil {
-    private static final String TAG = "FileUtil";
-
     /**
      * 将 Uri 转换为 file path
      */

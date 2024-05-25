@@ -27,7 +27,6 @@ import com.feng.freader.entity.epub.EpubTocItem;
 import com.feng.freader.entity.epub.OpfData;
 import com.feng.freader.entity.eventbus.EpubCatalogInitEvent;
 import com.feng.freader.entity.eventbus.Event;
-import com.feng.freader.http.UrlObtainer;
 import com.feng.freader.presenter.ReadPresenter;
 import com.feng.freader.util.EpubUtils;
 import com.feng.freader.util.EventBusUtil;
@@ -416,10 +415,7 @@ public class ReadActivity extends BaseActivity<ReadPresenter>
 
     @Override
     protected void doAfterInit() {
-        if (mType == 1){
-            // 通过 FilePath 读取本地小说
-            mPresenter.loadTxt(mNovelUrl);
-        } else if (mType == 2) {
+        if (mType == 2) {
             // 先根据 filePath 获得 OpfData
             mPresenter.getOpfData(mNovelUrl);
         }
@@ -505,8 +501,6 @@ public class ReadActivity extends BaseActivity<ReadPresenter>
         // 获取具体章节信息
         if (mChapterUrlList.get(mChapterIndex) != null) {
             mIsLoadingChapter = true;
-            mPresenter.getDetailedChapterData(UrlObtainer
-                    .getDetailedChapter(mChapterUrlList.get(mChapterIndex)));
         } else {
             mStateTv.setText("获取章节信息失败");
         }

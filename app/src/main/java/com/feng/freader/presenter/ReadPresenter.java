@@ -99,11 +99,6 @@ public class ReadPresenter extends BasePresenter<IReadContract.View>
     }
 
     @Override
-    public void loadTxt(String filePath) {
-        mModel.loadTxt(filePath);
-    }
-
-    @Override
     public void getOpfData(String filePath) {
         mModel.getOpfData(filePath);
     }

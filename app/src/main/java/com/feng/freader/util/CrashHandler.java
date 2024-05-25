@@ -1,12 +1,8 @@
 package com.feng.freader.util;
 
 import android.os.Process;
-import android.util.Log;
 
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
-
-    private static final String TAG = "fzh";
-
     private static CrashHandler sInstance = new CrashHandler();
 
     private Thread.UncaughtExceptionHandler mDefaultCrashHandler;
@@ -28,10 +24,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        // 这里可以上传异常信息到服务器
-        // 为了方便起见，这里只是简单地打印出来
-        Log.d(TAG, "uncaughtException: " + e.getMessage());
-
         // 如果系统提供了默认的异常处理器，则交给系统结束程序，否则由自己来结束
         if (mDefaultCrashHandler != null) {
             mDefaultCrashHandler.uncaughtException(t, e);

@@ -14,14 +14,12 @@ import android.widget.TextView;
 import com.feng.freader.R;
 import com.feng.freader.adapter.CatalogAdapter;
 import com.feng.freader.base.BaseActivity;
-import com.feng.freader.base.BasePresenter;
 import com.feng.freader.constant.Constant;
 import com.feng.freader.constant.EventBusCode;
 import com.feng.freader.constract.ICatalogContract;
 import com.feng.freader.entity.data.CatalogData;
 import com.feng.freader.entity.eventbus.Event;
 import com.feng.freader.entity.eventbus.HoldReadActivityEvent;
-import com.feng.freader.http.UrlObtainer;
 import com.feng.freader.presenter.CatalogPresenter;
 import com.feng.freader.util.StatusBarUtil;
 
@@ -113,10 +111,6 @@ public class CatalogActivity extends BaseActivity<CatalogPresenter>
     protected void doAfterInit() {
         StatusBarUtil.setLightColorStatusBar(this);
         getWindow().setStatusBarColor(getResources().getColor(R.color.catalog_bg));
-
-        if (mUrl != null) {
-            mPresenter.getCatalogData(UrlObtainer.getCatalogInfo(mUrl));
-        }
     }
 
     @Override
@@ -259,7 +253,6 @@ public class CatalogActivity extends BaseActivity<CatalogPresenter>
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mPresenter.getCatalogData(UrlObtainer.getCatalogInfo(mUrl));
             }
         }, 300);
     }

@@ -6,27 +6,15 @@ import android.util.Log;
 
 import com.feng.freader.constant.Constant;
 import com.feng.freader.constract.IReadContract;
-import com.feng.freader.entity.bean.CatalogBean;
-import com.feng.freader.entity.bean.DetailedChapterBean;
-import com.feng.freader.entity.data.DetailedChapterData;
 import com.feng.freader.entity.epub.EpubData;
 import com.feng.freader.entity.epub.OpfData;
-import com.feng.freader.http.OkhttpBuilder;
-import com.feng.freader.http.OkhttpCall;
-import com.feng.freader.http.OkhttpUtil;
-import com.feng.freader.util.CharsetNameUtil;
 import com.feng.freader.util.EpubUtils;
 import com.google.gson.Gson;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,118 +33,12 @@ public class ReadModel implements IReadContract.Model {
 
     @Override
     public void getChapterList(String url) {
-        OkhttpBuilder builder = new OkhttpBuilder.Builder()
-                .setUrl(url)
-                .setOkhttpCall(new OkhttpCall() {
-                    @Override
-                    public void onResponse(String json) {   // 得到 json 数据
-                        CatalogBean bean = mGson.fromJson(json, CatalogBean.class);
-                        if (bean.getCode() != 0) {
-                            mPresenter.getChapterUrlListError("未找到相关数据");
-                            return;
-                        }
-                        List<String> chapterUrlList = new ArrayList<>();
-                        List<String> chapterNameList = new ArrayList<>();
-                        List<CatalogBean.ListBean> list = bean.getList();
-                        for (CatalogBean.ListBean item : list) {
-                            chapterUrlList.add(item.getUrl());
-                            chapterNameList.add(item.getNum());
-                        }
-                        mPresenter.getChapterUrlListSuccess(chapterUrlList, chapterNameList);
-                    }
-
-                    @Override
-                    public void onFailure(String errorMsg) {
-                        mPresenter.getChapterUrlListError(errorMsg);
-                    }
-                })
-                .build();
-        OkhttpUtil.getRequest(builder);
     }
 
     @Override
     public void getDetailedChapterData(String url) {
-        OkhttpBuilder builder = new OkhttpBuilder.Builder()
-                .setUrl(url)
-                .setOkhttpCall(new OkhttpCall() {
-                    @Override
-                    public void onResponse(String json) {   // 得到 json 数据
-                        DetailedChapterBean bean = mGson.fromJson(json, DetailedChapterBean.class);
-                        if (bean.getCode() != 0) {
-                            mPresenter.getDetailedChapterDataError("未找到相关数据");
-                            return;
-                        }
-                        StringBuilder contentBuilder = new StringBuilder();
-                        contentBuilder.append("    ");
-                        for (String s : bean.getContent()) {
-                            contentBuilder.append(s);
-                            contentBuilder.append("\n");
-                        }
-                        DetailedChapterData data = new DetailedChapterData(bean.getNum(),
-                                contentBuilder.toString());
-                        mPresenter.getDetailedChapterDataSuccess(data);
-                    }
-
-                    @Override
-                    public void onFailure(String errorMsg) {
-                        mPresenter.getDetailedChapterDataError(errorMsg);
-                    }
-                })
-                .build();
-        OkhttpUtil.getRequest(builder);
     }
 
-    @Override
-    public void loadTxt(final String filePath) {
-        new Thread(() -> {
-            File file = new File(filePath);
-            BufferedReader br = null;
-            StringBuilder builder = null;
-            String error = "";
-            try {
-                br = new BufferedReader(new InputStreamReader(new FileInputStream(file), CharsetNameUtil.getFileCharsetName(filePath)));
-                builder = new StringBuilder();
-                String str;
-                while ((str = br.readLine()) != null) {
-                    builder.append(str);
-                    builder.append("\n");
-                }
-            } catch (FileNotFoundException e) {
-                Log.d(TAG, "e1 = " + e.getMessage());
-                e.printStackTrace();
-                error = Constant.NOT_FOUND_FROM_LOCAL;
-            } catch (UnsupportedEncodingException e) {
-                Log.d(TAG, "e2 = " + e.getMessage());
-                e.printStackTrace();
-                error = e.getMessage();
-            } catch (IOException e) {
-                Log.d(TAG, "e3 = " + e.getMessage());
-                e.printStackTrace();
-                error = e.getMessage();
-            } finally {
-                try {
-                    if (br != null) {
-                        br.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            final String finalError = error;
-            final String text = builder == null ? "" : builder.toString();
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    if (finalError.equals("")) {
-                        mPresenter.loadTxtSuccess(text);
-                    } else {
-                        mPresenter.loadTxtError(finalError);
-                    }
-                }
-            });
-        }).start();
-    }
 
     /**
      * 从 epub 文件中读取到 Opf 文件信息
